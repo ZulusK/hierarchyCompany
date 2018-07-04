@@ -8,8 +8,8 @@
   "bin": "./bin/www",
   "main": "./bin/www",
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "NODE_ENV=development  nodemon $NODE_DEBUG_OPTION  ./bin/www",
+    "start": "NODE_ENV=production node ./bin/www",
+    "dev": "NODE_ENV=development nodemon $NODE_DEBUG_OPTION  ./bin/www",
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "test": "npm run lint && NODE_ENV=test mocha"
   },
@@ -50,6 +50,7 @@
     "eslint-plugin-standard": "^3.1.0",
     "faker": "^4.1.0",
     "mocha": "^5.2.0",
+    "mocha-clean": "^1.0.0",
     "nodemon": "^1.17.5"
   },
   "nodemonConfig": {

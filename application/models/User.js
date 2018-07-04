@@ -1,34 +1,48 @@
 "use strict";
-const mongoose=require("mongoose");
-const utils=require("@utils");
-const bcrypt=require("bcrypt");
+const mongoose = require("mongoose");
+const utils = require("@utils");
+const bcrypt = require("bcrypt");
 const log = require("@utils").logger(module);
-const config=require("@config");
+const config = require("@config");
 
-const UserSchema=mongoose.Schema({
-    username:{
-        type:String,
-        unique:true,
-        required:true,
-        trim:true
+const UserSchema = mongoose.Schema({
+    role: {
+        type: Boolean,
+        default: false
     },
-    password:{
-        type:String,
-        required:true,
+    boss: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    },
+    associateCount:{
+        type:Number,
+        default:0
+    },
+    username: {
+        type: String,
+        unique: true,
+        required: true,
+        trim: true,
+        index: true
+    },
+    password: {
+        type: String,
+        required: true,
     },
     jwtSecrets: {
         access: String,
-        refresh:String
+        refresh: String
     }
-},{timestamps:true});
+}, {
+    timestamps: true
+});
 
 UserSchema.plugin(require("mongoose-paginate"));
-UserSchema.index({username:1});
 
 
 // generate new token's secrets and save them
-UserSchema.methods.regenerateJWTSalts = async function (){
-    const salts= await Promise.all([
+UserSchema.methods.regenerateJWTSalts = async function () {
+    const salts = await Promise.all([
         bcrypt.genSalt(config.get("TOKEN_SECRET_SALT_LENGTH")),
         bcrypt.genSalt(config.get("TOKEN_SECRET_SALT_LENGTH"))
     ]);
@@ -40,7 +54,7 @@ UserSchema.methods.regenerateJWTSalts = async function (){
 };
 
 UserSchema.methods.generateAccessToken = function () {
-    const payload= {
+    const payload = {
         id: this._id,
         salt: this.jwtSecrets.access
     };
@@ -48,13 +62,12 @@ UserSchema.methods.generateAccessToken = function () {
 };
 
 UserSchema.methods.generateRefreshToken = function () {
-    const payload= {
+    const payload = {
         id: this._id,
         salt: this.jwtSecrets.refresh
     };
     return utils.tokenGenerator.generate("refresh", payload);
 };
-
 UserSchema.methods.generateJWT = function () {
     const currTime = new Date().getTime();
     return {
@@ -68,13 +81,13 @@ UserSchema.methods.generateJWT = function () {
         }
     };
 };
-UserSchema.methods.comparePassword = function (plainPasswordCandidate){
+UserSchema.methods.comparePassword = function (plainPasswordCandidate) {
     return bcrypt.compare(plainPasswordCandidate, this.password);
 };
-UserSchema.pre('save',async function (next) {
+UserSchema.pre('save', async function (next) {
     if (!this.isModified("password") && !this.isNew) {
         return next();
-    }else {
+    } else {
         try {
             const salts = await Promise.all([
                 bcrypt.genSalt(config.get("TOKEN_SECRET_SALT_LENGTH")), // access secret salt
@@ -84,7 +97,7 @@ UserSchema.pre('save',async function (next) {
                 access: salts[0],
                 refresh: salts[1]
             };
-            this.password=await bcrypt.hash(this.password, config.get("PASSWORD_SALT_LENGTH"));
+            this.password = await bcrypt.hash(this.password, config.get("PASSWORD_SALT_LENGTH"));
             next();
         } catch (err) {
             log.error(err);
@@ -93,4 +106,11 @@ UserSchema.pre('save',async function (next) {
     }
 });
 
-module.exports=mongoose.model("User",UserSchema);
+UserSchema.virtual("isBoss")
+    .get(function () {
+        return this.associateCount>0
+    })
+
+UserSchema.methods.
+
+module.exports = mongoose.model("User", UserSchema);

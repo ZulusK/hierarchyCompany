@@ -9,7 +9,9 @@ class UserDriver extends AbstractDriver {
     }
 
     async getByCredentials(username, password) {
-        const user = await this.findOne({username});
+        const user = await this.findOne({
+            username
+        });
         if (user && await user.comparePassword(password)) {
             return user;
         }
@@ -26,13 +28,35 @@ class UserDriver extends AbstractDriver {
         }
     }
 
-    create({username, password}) {
-        return super.create({username, password});
+    create({
+        username,
+        password
+    }) {
+        return super.create({
+            username,
+            password
+        });
     }
-    getPublicFields(doc){
-        const {username,_id:id,createdAt,updatedAt}=doc;
-        return {username,id,createdAt,updatedAt};
+    getPublicFields(doc) {
+        const {
+            username,
+            _id: id,
+            createdAt,
+            updatedAt,
+            boss,
+            isBoss
+        } = doc;
+        return {
+            username,
+            id,
+            createdAt,
+            updatedAt,
+            boss,
+            isBoss
+        };
     }
+
+
 }
 
-module    .exports = new UserDriver();
+module.exports = new UserDriver();

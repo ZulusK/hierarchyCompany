@@ -1,3 +1,4 @@
 --recursive
 --exit
 --timeout 5000
+--require mocha-clean
