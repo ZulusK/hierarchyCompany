@@ -1,0 +1,72 @@
+{
+  "name": "hierarchyCompany",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "private": true,
+  "bin": "./bin/www",
+  "main": "./bin/www",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "NODE_ENV=development  nodemon $NODE_DEBUG_OPTION  ./bin/www",
+    "lint": "./node_modules/eslint/bin/eslint.js .",
+    "test": "npm run lint && NODE_ENV=test mocha"
+  },
+  "dependencies": {
+    "bcrypt": "^2.0.1",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.3",
+    "busboy-body-parser": "^0.3.2",
+    "chai-as-promised": "^7.1.1",
+    "compression": "^1.7.2",
+    "config": "^1.30.0",
+    "cors": "^2.8.4",
+    "debug": "~2.6.9",
+    "dotenv": "^6.0.0",
+    "express": "~4.16.0",
+    "express-validator": "^5.2.0",
+    "helmet": "^3.12.1",
+    "http-errors": "~1.6.2",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.10",
+    "module-alias": "^2.1.0",
+    "mongoose": "^5.2.0",
+    "mongoose-paginate": "^5.0.3",
+    "morgan": "~1.9.0",
+    "passport": "^0.4.0",
+    "passport-http": "^0.3.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "validator": "^10.4.0",
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "eslint": "^4.19.1",
+    "eslint-plugin-jasmine": "^2.10.1",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-standard": "^3.1.0",
+    "faker": "^4.1.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.17.5"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "test/*",
+      ".gitignore",
+      ".README.md"
+    ],
+    "delay": "1000"
+  },
+  "_moduleAliases": {
+    "@config": "./config",
+    "@app": "./application/",
+    "@routes": "./application/routes",
+    "@models": "./application/models",
+    "@utils": "./utils",
+    "@db": "./application/db",
+    "@server": "./bin/www"
+  }
+}
