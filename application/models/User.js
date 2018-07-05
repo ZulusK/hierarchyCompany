@@ -117,7 +117,8 @@ UserSchema.virtual("publicInfo")
             username: this.username,
             isBoss: this.isBoss,
             isAdmin: this.isAdmin,
-            created: this.created
+            created: this.created,
+            updatedAt:this.updatedAt
         }
     })
 

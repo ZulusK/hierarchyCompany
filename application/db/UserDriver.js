@@ -4,7 +4,7 @@ const _ = require("lodash");
 const AbstractDriver = require("./AbstractDriver");
 const UserModel = require("@models").User;
 const log = require("@utils").logger(module);
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
 class UserDriver extends AbstractDriver {
@@ -38,7 +38,7 @@ class UserDriver extends AbstractDriver {
                 username,
                 password,
                 isAdmin: true,
-                boss:null
+                boss: null
             });
         } else {
             return super.create({
@@ -116,7 +116,7 @@ class UserDriver extends AbstractDriver {
     /**
      * PROCESS RELATIONS WITH NEW BOSS
      */
-    async addWorkerToBoss(worker, boss) {
+    async addWorkerToBoss({worker, boss}) {
         if (boss && boss.id !== this.ROOT_ADMIN.id) {
             if (worker.id === boss.id) {
                 throw new Error("Try to build ciclic connections");
@@ -130,24 +130,50 @@ class UserDriver extends AbstractDriver {
         }
     }
 
-    async addWorker(boss, worker) {
+    async addWorker({boss, worker}) {
+        if(boss){
+            // check for circular connections
+            const firstLvlChildren=await this.getFields({boss:worker.id},{id:1,username:1});
+            const connections=await Promise.all(firstLvlChildren.map(c=>{
+                return this.isBossOf({boss:c, worker:boss});
+            }));
+            if(connections.indexOf(true)>=0){
+                throw new Error("You try to make circular connection")
+            }
+        }
         await this.removeWorkerFromOldBoss(worker);
-        await this.addWorkerToBoss(worker, boss);
+        await this.addWorkerToBoss({boss, worker});
     }
 
-    async isBossOf(boss, worker) {
+    async isBossOf({boss, worker}) {
+        let bossId=null;
+        let workerId=null;
+        if (boss) {
+            bossId = boss._id;
+        } else {
+            throw Error("Boss is required")
+        }
+        // admin is boss of everyone
+        if (boss.isAdmin) {
+            return true;
+        }
+        if (worker) {
+            workerId = worker._id;
+        }else{
+            throw Error("Worker is required")
+        }
         // user is not boss of himself
-        if(boss._id===worker._id){
+        if (bossId === workerId) {
             return false;
         }
         // boss is admin, so he is boss for everyone
-        if(!boss.boss){
+        if (!boss.boss) {
             return true;
         }
         // else search boss of boss
-        const bossOfBoss=await this.findById(boss.boss);
+        const bossOfBoss = await this.findById(boss.boss);
         return this._model.aggregate()
-            .match({_id: worker._id})
+            .match({_id: workerId})
             .graphLookup({
                 from: "users",
                 startWith: "$boss",
@@ -161,14 +187,40 @@ class UserDriver extends AbstractDriver {
             .project({
                 _id: 1,
                 steps: 1,
-                connections: "$connections._id"
+                username:1,
+                connections:"$connections._id",
             })
             .exec()
             .then((result) => {
-                return _.findIndex(result[0].connections, boss._id) >= 0;
+                if (result.length>0) {
+                    return false;
+                }
+                return result[0].connections.indexOf(String(bossId)) >= 0;
             })
     }
-}
 
+    get publicFields() {
+        return {
+            id: 1,
+            username: 1,
+            createdAt: 1,
+            updatedAt: 1,
+            boss: 1,
+            isAdmin: 1,
+            isBoss: 1
+        }
+    }
+
+    async getSubordinates(boss) {
+        let queue = [boss.publicInfo];
+        const result = [boss];
+        while (!queue.empty) {
+            const currUser = queue.pop();
+            result.push(currUser);
+            queue = queue.concat(await this.getFields({boss: currUser.id}, this.publicFields));
+        }
+        return result;
+    }
+}
 
 module.exports = new UserDriver();

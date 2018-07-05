@@ -20,9 +20,9 @@ function connectWithRetry() {
 mongoose.connection.on('error', err => {
     log.error(`MongoDB connection error: ${err}`);
     setTimeout(connectWithRetry, 5000);
-    // process.exit(-1)
 });
-const UserDriver = module.exports.UserDriver;
+
+const UserDriver=module.exports.UserDriver;
 
 async function buildConnections() {
     const a = await UserDriver.findOne({
@@ -43,38 +43,37 @@ async function buildConnections() {
     const g = await UserDriver.findOne({
         username: "G"
     });
-    await UserDriver.addWorker(a, b);
-    await UserDriver.addWorker(b, c);
-    await UserDriver.addWorker(b, e);
-    await UserDriver.addWorker(e, f);
-    await UserDriver.addWorker(a, g);
+    await UserDriver.addWorker({boss:a, worker:b});
+    await UserDriver.addWorker({boss:b, worker:c});
+    await UserDriver.addWorker({boss:b, worker:e});
+    await UserDriver.addWorker({boss:e, worker:f});
+    await UserDriver.addWorker({boss:a, worker:g});
+    try{
+        await UserDriver.addWorker({boss:e,worker:a});
+        console.log("SUCCESS")
+    }catch (e) {
+        console.log(e)
+    }
     await UserDriver.removeWorkerFromOldBoss(c);
-    log.info(`boss of A: ${a.boss}`)
-    log.info(`boss of B: ${b.boss}`)
-    log.info(`boss of C: ${c.boss}`)
-    log.info(`id of A: ${a.id}`)
-    log.info(`id of B: ${b.id}`)
-    log.info(`id of c: ${c.id}`)
 }
 
-async function check(b,w){
+async function check(b, w) {
     const W = await UserDriver.findOne({
         username: w
     });
     const B = await UserDriver.findOne({
         username: b
     });
-    log.info(`${b} -> ${w} ${await UserDriver.isBossOf(B,W)}`)
+    log.info(`${b} -> ${w} ${await UserDriver.isBossOf({boss:B, worker:W})}`)
 }
-async function checkIsBossOf(){
-    for(let b=0; b<7;b++) {
+
+async function checkIsBossOf() {
+    for (let b = 0; b < 7; b++) {
         for (let w = 0; w < 7; w++) {
             await check(String.fromCharCode("A".charCodeAt(0) + b), String.fromCharCode("A".charCodeAt(0) + w))
         }
     }
 }
-
-
 mongoose.connection.on('connected', async () => {
     log.info('MongoDB is connected');
     await mongoose.model("User").remove({}).exec();
@@ -89,23 +88,26 @@ mongoose.connection.on('connected', async () => {
             password,
             id: rootAdmin._id
         };
-        for(let i=0; i<10;i++){
-            await module.exports.UserDriver.create({
-                username: String.fromCharCode(i+"A".charCodeAt(0)),
-                password: String.fromCharCode(i+"A".charCodeAt(0))
-            });
-        }
         log.debug(`root admin created/updated ${username}:${password}, id:${rootAdmin.id}`);
-        await buildConnections();
-        await checkIsBossOf();
+        if(config.get("isDev")){
+            // add users
+            for (let i = 0; i < 7; i++) {
+                await module.exports.UserDriver.create({
+                    username: String.fromCharCode(i + "A".charCodeAt(0)),
+                    password: String.fromCharCode(i + "A".charCodeAt(0))
+                });
+            }
+            await buildConnections();
+            await checkIsBossOf();
+        }
     } catch (err) {
         log.error(err);
         throw err;
     }
 });
 
-mongoose.set('debug', config.get("isDev"));
-
-
+// mongoose.set('debug', config.get("isDev"));
 
 module.exports.connect = connectWithRetry;
+
+

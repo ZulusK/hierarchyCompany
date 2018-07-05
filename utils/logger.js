@@ -19,7 +19,7 @@ function getLogger(module) {
             new transports.Console({
                 colorize: true,
                 level: config.get("LOG_LEVEL"),
-                silent: process.env.NODE_ENV.startsWith("test"),
+                // silent: process.env.NODE_ENV.startsWith("test"),
             }),
         ],
     });
