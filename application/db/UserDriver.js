@@ -7,6 +7,10 @@ const log = require("@utils").logger(module);
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
+
+
+
+
 class UserDriver extends AbstractDriver {
     constructor() {
         super(UserModel)
@@ -221,6 +225,84 @@ class UserDriver extends AbstractDriver {
         }
         return result;
     }
+
+    async setup(){
+        await this.fillDB();
+        await this.addAdmins();
+        await this.buildConnections();
+    }
+
+    async  buildConnections() {
+        const a = await this.findOne({
+            username: "A"
+        });
+        const b = await this.findOne({
+            username: "B"
+        });
+        const c = await this.findOne({
+            username: "C"
+        });
+        const e = await this.findOne({
+            username: "E"
+        });
+        const f = await this.findOne({
+            username: "F"
+        });
+        const g = await this.findOne({
+            username: "G"
+        });
+        await this.addWorker({boss: a, worker: b});
+        await this.addWorker({boss: b, worker: c});
+        await this.addWorker({boss: b, worker: e});
+        await this.addWorker({boss: e, worker: f});
+        await this.addWorker({boss: a, worker: g});
+        try {
+            log.debug("Try to make circular connection: E->A");
+            await this.addWorker({boss: e, worker: a});
+            throw new Error("This is unbelievable, check this code");
+        } catch (e) {
+            log.error("Next error is required");
+            log.error(e);
+            log.debug("All is ok");
+        }
+        await this.removeWorkerFromOldBoss(c);
+    }
+    async  addAdmins() {
+        await this.create({
+            username:"admin",
+            password:"admin",
+            isAdmin: true,
+        });
+    }
+
+    async  check(b, w) {
+        const W = await this.findOne({
+            username: w
+        });
+        const B = await this.findOne({
+            username: b
+        });
+        log.info(`${b} -> ${w} ${await this.isBossOf({boss: B, worker: W})}`)
+    }
+
+    async  checkIsBossOf() {
+        log.info("Notation 'X -> Y' means X is boss of Y");
+        for (let b = 0; b < 7; b++) {
+            for (let w = 0; w < 7; w++) {
+                await this.check(String.fromCharCode("A".charCodeAt(0) + b), String.fromCharCode("A".charCodeAt(0) + w))
+            }
+        }
+    }
+
+    async  fillDB() {
+        for (let i = 0; i < 7; i++) {
+            await this.create({
+                username: String.fromCharCode(i + "A".charCodeAt(0)),
+                password: String.fromCharCode(i + "A".charCodeAt(0))
+            });
+        }
+    }
+    
 }
 
 module.exports = new UserDriver();

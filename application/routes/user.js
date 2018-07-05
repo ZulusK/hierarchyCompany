@@ -171,4 +171,34 @@ router.get("/workers",
     }
 );
 
+router.get("/workers",
+    passport.authenticate(["bearer-access", "basic"], {session: false}),
+    async (req, res) => {
+        if(req.user.isAdmin){
+            // return all users
+            const allUsers=await UserDriver.getFields({},UserDriver.publicFields);
+            return res.json(allUsers.map(x=>x.publicInfo))
+        }else if(!req.user.isBoss){
+            return res.json([req.user.publicInfo]);
+        }else{
+            //select all subordinates
+            const allUsers=await UserDriver.getSubordinates(req.user);
+            return res.json(allUsers);
+        }
+    }
+);
+
+router.post("/setup",
+    passport.authenticate(["bearer-access", "basic"], {session: false}),
+    async(req,res,next)=>{
+        if(req.user.isAdmin){
+            await UserDriver.remove({role:{$ne:"root"}});
+            await UserDriver.setup();
+            res.status(200).send();
+        }else{
+            next(createError.Forbidden())
+        }
+    }
+);
+
 module.exports = router;
