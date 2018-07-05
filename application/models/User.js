@@ -5,19 +5,20 @@ const bcrypt = require("bcrypt");
 const log = require("@utils").logger(module);
 const config = require("@config");
 
+
 const UserSchema = mongoose.Schema({
     role: {
         type: String,
-        enum:["admin","root","user"],
-        default: false
+        enum: ["admin", "root", "user"],
+        default: "user"
     },
     boss: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        type:mongoose.Schema.Types.ObjectId,
+        default:null
     },
-    associateCount:{
-        type:Number,
-        default:0
+    countOfWorkers: {
+        type: Number,
+        default: 0
     },
     username: {
         type: String,
@@ -85,10 +86,16 @@ UserSchema.methods.generateJWT = function () {
 UserSchema.methods.comparePassword = function (plainPasswordCandidate) {
     return bcrypt.compare(plainPasswordCandidate, this.password);
 };
+
+
+
+
+
 UserSchema.pre('save', async function (next) {
-    if (!this.isModified("password") && !this.isNew) {
-        return next();
-    } else {
+    if(this.role==="root"){
+        this.boss=null;
+    }
+    if (this.isModified("password") || this.isNew) {
         try {
             const salts = await Promise.all([
                 bcrypt.genSalt(config.get("TOKEN_SECRET_SALT_LENGTH")), // access secret salt
@@ -108,20 +115,23 @@ UserSchema.pre('save', async function (next) {
 });
 
 UserSchema.virtual("publicInfo")
-    .get(function(){
+    .get(function () {
         return {
-            id:this._id,
-            username:this.username,
-            isBoss:this.isBoss,
-            isAdmin:this.isAdmin,
-            created:this.created
+            id: this._id,
+            username: this.username,
+            isBoss: this.isBoss,
+            isAdmin: this.isAdmin,
+            created: this.created
         }
     })
 
 UserSchema.virtual("isBoss")
     .get(function () {
-        return this.associateCount>0
+        return this.countOfWorkers > 0
     })
-
+UserSchema.virtual("isAdmin")
+    .get(function () {
+        return this.role === "admin" || this.role === "root"
+    })
 
 module.exports = mongoose.model("User", UserSchema);
