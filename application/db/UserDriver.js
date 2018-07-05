@@ -133,7 +133,7 @@ class UserDriver extends AbstractDriver {
     async addWorker({boss, worker}) {
         if(boss){
             // check for circular connections
-            const firstLvlChildren=await this.getFields({boss:worker.id},{id:1,username:1});
+            const firstLvlChildren=await this.find({boss:worker.id});
             const connections=await Promise.all(firstLvlChildren.map(c=>{
                 return this.isBossOf({boss:c, worker:boss});
             }));
@@ -192,10 +192,10 @@ class UserDriver extends AbstractDriver {
             })
             .exec()
             .then((result) => {
-                if (result.length>0) {
+                if (result.length===0) {
                     return false;
                 }
-                return result[0].connections.indexOf(String(bossId)) >= 0;
+                return _.findIndex(result[0].connections,bossId) >= 0;
             })
     }
 

@@ -130,7 +130,6 @@ router.put("/workers",
     },
     // check access
     async (req, res, next) => {
-    console.log(req.user.isAdmin)
         if (!await UserDriver.isBossOf({boss: req.user, worker: req.body.worker})) {
             next(createError.Forbidden());
         } else {
@@ -144,8 +143,8 @@ router.put("/workers",
                 await UserDriver.addWorker({boss: req.body.boss, worker: req.body.worker})
             } else {
                 await UserDriver.removeWorkerFromOldBoss(req.body.worker);
-                res.status(200).send();
             }
+            res.status(200).send();
         } catch (e) {
             log.error(e);
             next(createError.BadRequest());

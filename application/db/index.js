@@ -71,6 +71,7 @@ async function check(b, w) {
 }
 
 async function checkIsBossOf() {
+    log.info("Notation 'X -> Y' means X is boss of Y");
     for (let b = 0; b < 7; b++) {
         for (let w = 0; w < 7; w++) {
             await check(String.fromCharCode("A".charCodeAt(0) + b), String.fromCharCode("A".charCodeAt(0) + w))
@@ -116,7 +117,7 @@ mongoose.connection.on('connected', async () => {
             await fillDB();
             await addAdmins();
             await buildConnections();
-            await checkIsBossOf();
+            // await checkIsBossOf();
         }
     } catch (err) {
         log.error(err);
