@@ -37,7 +37,7 @@ class UserDriver extends AbstractDriver {
             return super.create({
                 username,
                 password,
-                isAdmin: true,
+                role: "admin",
                 boss: null
             });
         } else {
@@ -212,12 +212,12 @@ class UserDriver extends AbstractDriver {
     }
 
     async getSubordinates(boss) {
-        let queue = [boss.publicInfo];
-        const result = [boss];
-        while (!queue.empty) {
-            const currUser = queue.pop();
-            result.push(currUser);
-            queue = queue.concat(await this.getFields({boss: currUser.id}, this.publicFields));
+        let queue = [boss];
+        const result = [];
+        while (queue.length>0) {
+            const currUser = queue.shift();
+            result.push(currUser.publicInfo||currUser);
+            queue = queue.concat(await this.getFields({boss: currUser.id},this.publicFields));
         }
         return result;
     }

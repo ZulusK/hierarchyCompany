@@ -115,6 +115,7 @@ UserSchema.virtual("publicInfo")
         return {
             id: this._id,
             username: this.username,
+            boss:this.boss,
             isBoss: this.isBoss,
             isAdmin: this.isAdmin,
             created: this.created,

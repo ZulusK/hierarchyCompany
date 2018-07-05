@@ -130,6 +130,7 @@ router.put("/workers",
     },
     // check access
     async (req, res, next) => {
+    console.log(req.user.isAdmin)
         if (!await UserDriver.isBossOf({boss: req.user, worker: req.body.worker})) {
             next(createError.Forbidden());
         } else {
@@ -143,6 +144,7 @@ router.put("/workers",
                 await UserDriver.addWorker({boss: req.body.boss, worker: req.body.worker})
             } else {
                 await UserDriver.removeWorkerFromOldBoss(req.body.worker);
+                res.status(200).send();
             }
         } catch (e) {
             log.error(e);
@@ -158,14 +160,14 @@ router.get("/workers",
     async (req, res) => {
        if(req.user.isAdmin){
            // return all users
-           const allUsers=await UserDriver.getFields({},UserDriver.publicFields).exec();
+           const allUsers=await UserDriver.getFields({},UserDriver.publicFields);
            return res.json(allUsers.map(x=>x.publicInfo))
        }else if(!req.user.isBoss){
-           return res.json([res.user.publicInfo]);
+           return res.json([req.user.publicInfo]);
        }else{
            //select all subordinates
-           const allUsers=await UserDriver.getSubordinates(req.user).exec();
-           return res.json(allUsers.map(x=>x.publicInfo));
+           const allUsers=await UserDriver.getSubordinates(req.user);
+           return res.json(allUsers);
        }
     }
 );
