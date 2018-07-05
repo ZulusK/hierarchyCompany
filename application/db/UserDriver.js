@@ -1,5 +1,6 @@
 "use strict";
 
+const _ = require("lodash");
 const AbstractDriver = require("./AbstractDriver");
 const UserModel = require("@models").User;
 const log = require("@utils").logger(module);
@@ -31,16 +32,13 @@ class UserDriver extends AbstractDriver {
         }
     }
 
-    create({
-        username,
-        password,
-        isAdmin
-    }) {
+    create({username, password, isAdmin}) {
         if (isAdmin) {
             return super.create({
                 username,
                 password,
-                isAdmin: true
+                isAdmin: true,
+                boss:null
             });
         } else {
             return super.create({
@@ -53,14 +51,12 @@ class UserDriver extends AbstractDriver {
 
     }
 
-    async createRootAdmin({
-        username,
-        password
-    }) {
+    async createRootAdmin({username, password}) {
         // check, is root user exist
         return super.findOne({
-                role: "root"
-            }).then(rootAdmin => {
+            role: "root"
+        })
+            .then(rootAdmin => {
                 // if exist
                 if (rootAdmin) {
                     // update  password
@@ -97,6 +93,7 @@ class UserDriver extends AbstractDriver {
             id
         };
     }
+
     get ROOT_ADMIN() {
         return this._rootAdmin;
     }
@@ -106,7 +103,7 @@ class UserDriver extends AbstractDriver {
      */
     async removeWorkerFromOldBoss(worker) {
         let oldBoss = null;
-        if (worker.boss && worker.boss !== this.ROOT_ADMIN.id) {
+        if (worker.boss && worker.boss.str !== this.ROOT_ADMIN.id.str) {
             oldBoss = await super.findById(worker.boss);
         }
         // decrease old boss's count of workers
@@ -120,8 +117,8 @@ class UserDriver extends AbstractDriver {
      * PROCESS RELATIONS WITH NEW BOSS
      */
     async addWorkerToBoss(worker, boss) {
-        if (boss && boss.id!==this.ROOT_ADMIN.id) {
-            if(worker.id===boss.id){
+        if (boss && boss.id !== this.ROOT_ADMIN.id) {
+            if (worker.id === boss.id) {
                 throw new Error("Try to build ciclic connections");
             }
             worker.boss = boss.id;
@@ -133,9 +130,43 @@ class UserDriver extends AbstractDriver {
         }
     }
 
-    async addWorker(worker,boss) {
+    async addWorker(boss, worker) {
         await this.removeWorkerFromOldBoss(worker);
         await this.addWorkerToBoss(worker, boss);
+    }
+
+    async isBossOf(boss, worker) {
+        // user is not boss of himself
+        if(boss._id===worker._id){
+            return false;
+        }
+        // boss is admin, so he is boss for everyone
+        if(!boss.boss){
+            return true;
+        }
+        // else search boss of boss
+        const bossOfBoss=await this.findById(boss.boss);
+        return this._model.aggregate()
+            .match({_id: worker._id})
+            .graphLookup({
+                from: "users",
+                startWith: "$boss",
+                connectFromField: "boss",
+                connectToField: "_id",
+                as: 'connections',
+                restrictSearchWithMatch: {
+                    "_id": {"$ne": bossOfBoss._id}
+                },
+            })
+            .project({
+                _id: 1,
+                steps: 1,
+                connections: "$connections._id"
+            })
+            .exec()
+            .then((result) => {
+                return _.findIndex(result[0].connections, boss._id) >= 0;
+            })
     }
 }
 

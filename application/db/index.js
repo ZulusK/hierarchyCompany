@@ -24,7 +24,7 @@ mongoose.connection.on('error', err => {
 });
 const UserDriver = module.exports.UserDriver;
 
-async function start() {
+async function buildConnections() {
     const a = await UserDriver.findOne({
         username: "A"
     });
@@ -34,10 +34,20 @@ async function start() {
     const c = await UserDriver.findOne({
         username: "C"
     });
-    const r = await UserDriver.findOne({
-        role: "root"
+    const e = await UserDriver.findOne({
+        username: "E"
+    });
+    const f = await UserDriver.findOne({
+        username: "F"
+    });
+    const g = await UserDriver.findOne({
+        username: "G"
     });
     await UserDriver.addWorker(a, b);
+    await UserDriver.addWorker(b, c);
+    await UserDriver.addWorker(b, e);
+    await UserDriver.addWorker(e, f);
+    await UserDriver.addWorker(a, g);
     await UserDriver.removeWorkerFromOldBoss(c);
     log.info(`boss of A: ${a.boss}`)
     log.info(`boss of B: ${b.boss}`)
@@ -45,6 +55,23 @@ async function start() {
     log.info(`id of A: ${a.id}`)
     log.info(`id of B: ${b.id}`)
     log.info(`id of c: ${c.id}`)
+}
+
+async function check(b,w){
+    const W = await UserDriver.findOne({
+        username: w
+    });
+    const B = await UserDriver.findOne({
+        username: b
+    });
+    log.info(`${b} -> ${w} ${await UserDriver.isBossOf(B,W)}`)
+}
+async function checkIsBossOf(){
+    for(let b=0; b<7;b++) {
+        for (let w = 0; w < 7; w++) {
+            await check(String.fromCharCode("A".charCodeAt(0) + b), String.fromCharCode("A".charCodeAt(0) + w))
+        }
+    }
 }
 
 
@@ -62,20 +89,15 @@ mongoose.connection.on('connected', async () => {
             password,
             id: rootAdmin._id
         };
-        await module.exports.UserDriver.create({
-            username: "A",
-            password: "A"
-        });
-        await module.exports.UserDriver.create({
-            username: "B",
-            password: "B"
-        });
-        await module.exports.UserDriver.create({
-            username: "C",
-            password: "C"
-        });
+        for(let i=0; i<10;i++){
+            await module.exports.UserDriver.create({
+                username: String.fromCharCode(i+"A".charCodeAt(0)),
+                password: String.fromCharCode(i+"A".charCodeAt(0))
+            });
+        }
         log.debug(`root admin created/updated ${username}:${password}, id:${rootAdmin.id}`);
-        await start();
+        await buildConnections();
+        await checkIsBossOf();
     } catch (err) {
         log.error(err);
         throw err;

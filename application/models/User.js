@@ -87,10 +87,6 @@ UserSchema.methods.comparePassword = function (plainPasswordCandidate) {
     return bcrypt.compare(plainPasswordCandidate, this.password);
 };
 
-
-
-
-
 UserSchema.pre('save', async function (next) {
     if(this.role==="root"){
         this.boss=null;
