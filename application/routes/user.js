@@ -61,4 +61,7 @@ router.post("/logout", passport.authenticate(["bearer-access", "basic"], {sessio
     await req.user.regenerateJWTSalts();
     return res.status(200).send();
 });
+
+
+
 module.exports = router;

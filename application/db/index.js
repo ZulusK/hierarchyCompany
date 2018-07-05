@@ -1,3 +1,4 @@
+"use strict";
 const utils = require("@utils");
 const mongoose = require("mongoose");
 const bluebird = require("bluebird");
@@ -22,10 +23,26 @@ mongoose.connection.on('error', err => {
     // process.exit(-1)
 });
 
-mongoose.connection.on('connected', () => {
+
+mongoose.connection.on('connected', async () => {
     log.info('MongoDB is connected');
+    try {
+        const {
+            rootAdmin,
+            username,
+            password
+        } = await module.exports.UserDriver.createRootAdmin(config.get("ROOT_ADMIN"));
+        module.exports.UserDriver.ROOT_ADMIN = {username,password,id:rootAdmin._id};
+        
+        log.debug(`root admin created/updated ${username}:${password}, id:${rootAdmin.id}`);
+    } catch (err) {
+        log.error(err);
+        throw err;
+    }
 });
 
 mongoose.set('debug', config.get("isDev"));
+
+
 
 module.exports.connect = connectWithRetry;

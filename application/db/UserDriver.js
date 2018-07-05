@@ -37,26 +37,45 @@ class UserDriver extends AbstractDriver {
             password
         });
     }
-    getPublicFields(doc) {
-        const {
-            username,
-            _id: id,
-            createdAt,
-            updatedAt,
-            boss,
-            isBoss
-        } = doc;
-        return {
-            username,
-            id,
-            createdAt,
-            updatedAt,
-            boss,
-            isBoss
-        };
+
+    async createRootAdmin({
+        username,
+        password
+    }) {
+        // check, is root user exist
+        return super.findOne({
+                role: "root"
+            }).then(rootAdmin => {
+                // if exist
+                if (rootAdmin) {
+                    // update  password
+                    rootAdmin.password = password;
+                    //return super user
+                    return rootAdmin.save();
+                } else {
+                    // esle create new user with specified fields
+                    return super.create({
+                        username,
+                        password,
+                        role: "root"
+                    });
+                }
+            })
+            .then(rootAdmin => {
+                return {
+                    rootAdmin,
+                    username: rootAdmin.username,
+                    password
+                };
+            })
     }
-
-
+    set ROOT_ADMIN(value){
+        const {password,username,id}=value;
+        this._rootAdmin={password,username,id};
+    }
+    get ROOT_ADMIN(){
+        return this._rootAdmin;
+    }
 }
 
 module.exports = new UserDriver();

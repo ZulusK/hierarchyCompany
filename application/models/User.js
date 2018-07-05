@@ -7,7 +7,8 @@ const config = require("@config");
 
 const UserSchema = mongoose.Schema({
     role: {
-        type: Boolean,
+        type: String,
+        enum:["admin","root","user"],
         default: false
     },
     boss: {
@@ -106,11 +107,21 @@ UserSchema.pre('save', async function (next) {
     }
 });
 
+UserSchema.virtual("publicInfo")
+    .get(function(){
+        return {
+            id:this._id,
+            username:this.username,
+            isBoss:this.isBoss,
+            isAdmin:this.isAdmin,
+            created:this.created
+        }
+    })
+
 UserSchema.virtual("isBoss")
     .get(function () {
         return this.associateCount>0
     })
 
-UserSchema.methods.
 
 module.exports = mongoose.model("User", UserSchema);

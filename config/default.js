@@ -4,7 +4,8 @@
 //     const password = process.env.DB_PASSWORD;
 //     return url.replace("<login>", login).replace("<psw>", password);
 // }
-const path=require("path");
+const path = require("path");
+const bcrypt = require("bcrypt");
 
 module.exports = {
     DB: {
@@ -12,12 +13,12 @@ module.exports = {
         AUTH_OPT: {
             user: process.env.DB_LOGIN,
             pass: process.env.DB_PASSWORD,
-            reconnectTries:30
+            reconnectTries: 30
         }
     },
     isDev: false,
     LOG_LEVEL: "info",
-    PUBLIC_DIR: path.join(__dirname,"../public"),
+    PUBLIC_DIR: path.join(__dirname, "../public"),
     MAX_PAGINATION: 100,
     STANDARD_PAGINATION: 10,
     PASSWORD_SALT_LENGTH: 10,
@@ -27,12 +28,11 @@ module.exports = {
     TOKEN_LIFE_ACCESS: 1e3 * 60 * 60, // 1 hour
     TOKEN_LIFE_REFRESH: 1e3 * 60 * 60 * 24, // 1 day
     TOKEN_GENERATOR_ALGORITHM: "HS256",
-
     validationRules: {
-        username:{
-            length:{
-                max:20,
-                min:3
+        username: {
+            length: {
+                max: 20,
+                min: 3
             },
         },
         password: {
@@ -42,5 +42,9 @@ module.exports = {
             },
             regExp: /^(?=.*\d.*)(?=.*[a-z].*)(?=.*[A-Z].*)(?=.*[!#$%&?]*.*).{8,16}$/
         }
-    }
+    },
+    ROOT_ADMIN: {
+        username: process.env.ROOT_ADMIN_USERNAME || bcrypt.genSaltSync(8),
+        password: process.env.ROOT_ADMIN_PASSWORD || bcrypt.genSaltSync(16),
+    },
 };
