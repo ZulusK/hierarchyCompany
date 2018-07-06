@@ -1,0 +1,2300 @@
+{
+	"info": {
+		"_postman_id": "d5ef91b3-0981-4ddc-b3d9-c933f367f35b",
+		"name": "hc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get",
+			"description": null,
+			"item": [
+				{
+					"name": "setup",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/setup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as admin]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8a08d417-d9d4-49a8-82e6-1df6bee5afa7",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"There are all users\",function(){",
+									"     pm.expect(jsonData).to.have.length(9);",
+									"})",
+									"",
+									"",
+									"pm.test(\"Each user have public fields\",function(){",
+									"     for(let user of jsonData){",
+									"         pm.expect(user).to.have.all.keys([\"id\",\"username\",\"isBoss\",\"isAdmin\",\"updatedAt\",\"boss\"]);",
+									"         pm.environment.set(user.username+\"_id\",user.id)       ",
+									"     }",
+									"})",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as A]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "728e1a31-73f9-42a1-9c45-516f1711b168",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains all usernames\",function(){",
+									"    const usernames=[\"B\",\"C\",\"E\",\"F\",\"A\",\"G\"];",
+									"    jsonData.forEach(user=>{",
+									"        pm.expect(user.username).to.be.oneOf(usernames);    ",
+									"    })",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "A",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as B]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "9cfce39d-a6e7-4ec5-92d6-56f1af8c9ab1",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains all usernames\",function(){",
+									"    const usernames=[\"B\",\"C\",\"E\",\"F\"];",
+									"    jsonData.forEach(user=>{",
+									"        pm.expect(user.username).to.be.oneOf(usernames);    ",
+									"    })",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "B",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "B",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as C]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c7cd55dc-509a-40e2-bdaa-62d3baab62d6",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains all usernames\",function(){",
+									"    const usernames=[\"C\"];",
+									"    jsonData.forEach(user=>{",
+									"        pm.expect(user.username).to.be.oneOf(usernames);    ",
+									"    })",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "C",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "C",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as D]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d79b867-0d6f-42e5-8ccc-d59593f3cd77",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains all usernames\",function(){",
+									"    const usernames=[\"D\"];",
+									"    jsonData.forEach(user=>{",
+									"        pm.expect(user.username).to.be.oneOf(usernames);    ",
+									"    })",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "D",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "D",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as E]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7d100903-4d88-4973-bb44-dc4cb896fb1d",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains all usernames\",function(){",
+									"    const usernames=[\"E\",\"F\"];",
+									"    jsonData.forEach(user=>{",
+									"        pm.expect(user.username).to.be.oneOf(usernames);    ",
+									"    })",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "E",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as F]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bcba57df-3bad-4db1-ab95-0835769a5246",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains all usernames\",function(){",
+									"    const usernames=[\"F\"];",
+									"    jsonData.forEach(user=>{",
+									"        pm.expect(user.username).to.be.oneOf(usernames);    ",
+									"    })",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "F",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "F",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as G]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f7f8a8d5-1f06-4ce0-b0a1-bb7929829b4b",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Contains all usernames\",function(){",
+									"    const usernames=[\"G\"];",
+									"    jsonData.forEach(user=>{",
+									"        pm.expect(user.username).to.be.oneOf(usernames);    ",
+									"    })",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "G",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "G",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "put",
+			"description": "",
+			"item": [
+				{
+					"name": "setup",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/setup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all workers [as admin]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8a08d417-d9d4-49a8-82e6-1df6bee5afa7",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"There are all users\",function(){",
+									"     pm.expect(jsonData).to.have.length(9);",
+									"})",
+									"",
+									"",
+									"pm.test(\"Each user have public fields\",function(){",
+									"     for(let user of jsonData){",
+									"         pm.expect(user).to.have.all.keys([\"id\",\"username\",\"isBoss\",\"isAdmin\",\"updatedAt\",\"boss\"]);",
+									"         pm.environment.set(user.username+\"_id\",user.id)       ",
+									"     }",
+									"})",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e4efdce87284b80ee8c94",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as admin] set A->E",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c1420bbd-8aaa-4a35-b2aa-2ebe00754c06",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "{{A_id}}",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{E_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as admin] get 422",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8e18bc5d-87b4-463b-9091-e608543d7609",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 422\", function () {",
+									"    pm.response.to.have.status(422);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "aas121s",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{E_id}}",
+									"description": "",
+									"warning": "",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as admin] get 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0e736d4d-eb82-48d6-be8c-603c3bab9c1c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "5b3e7a6c8020781fee45A2b7",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{E_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as A] set A->E",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "80c27559-8613-407d-8f13-b5583dd4ef5d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "A",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "{{A_id}}",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{E_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as A] set G->E",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "611609c8-eb69-45c5-8d8f-3a03eba45213",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "A",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "{{G_id}}",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{E_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as B] set G->A",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f3b40a98-e684-44cb-a3d6-990ba7e83cdc",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "B",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "B",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "{{G_id}}",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{A_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as admin] set A->D",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a54d6820-02dc-40a2-859a-037ff5a2b1b6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "{{A_id}}",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{D_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as D] set G->E",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a54d6820-02dc-40a2-859a-037ff5a2b1b6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "D",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "D",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "{{E_id}}",
+									"description": "",
+									"warning": ""
+								},
+								{
+									"key": "bossId",
+									"value": "{{G_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put [as G] set root->F",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a54d6820-02dc-40a2-859a-037ff5a2b1b6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "G",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "G",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "workerId",
+									"value": "{{F_id}}",
+									"description": "",
+									"warning": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/workers",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"workers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "signup test",
+			"description": "",
+			"item": [
+				{
+					"name": "signup valid",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a478a70d-3566-4ed1-ac4f-bd3bb992c64d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"current_username\", \"user\"+Math.floor(Math.random()*1000));",
+									"pm.environment.set(\"current_password\",\"123AbsdmKE$\")",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "033ba12f-78f4-4982-9e7c-3562fc816cdf",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"There are tokens and user's profile\",function(){",
+									"     pm.expect(jsonData).to.have.all.keys([\"tokens\",\"user\"]);",
+									"})",
+									"",
+									"pm.test(\"Returned use is equal to sended\",function(){",
+									"    pm.expect(jsonData.user.username).to.equal(pm.environment.get(\"current_username\"));",
+									"})",
+									"pm.test(\"There are access and refresh tokens\",function(){",
+									"     pm.expect(jsonData.tokens).to.have.all.keys([\"accessToken\",\"refreshToken\"]);",
+									"})",
+									"",
+									"pm.test(\"Access token contains token and expiredIn fields\",function(){",
+									"     pm.expect(jsonData.tokens.accessToken).to.have.keys([\"token\",\"expiredIn\"]);",
+									"})",
+									"",
+									"",
+									"pm.test(\"Refresh token contains token and expiredIn fields\",function(){",
+									"     pm.expect(jsonData.tokens.refreshToken).to.have.keys([\"token\",\"expiredIn\"]);",
+									"})",
+									"",
+									"",
+									"pm.environment.set(\"current_id\",jsonData.user.id);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "{{current_username}}",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "{{current_password}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup invalid [no username]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6c5e7aed-bb2b-48ec-b7cb-e831095e7cd3",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Body contains validation errors\",function(){",
+									"    pm.expect(jsonData.errors).to.have.all.keys(\"username\");",
+									"   ",
+									"})",
+									"pm.test(\"Error msg tells us, we didn't send username\",function(){",
+									"     pm.expect(jsonData.errors.username.msg).to.equal(\"username is required\");",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "12345678Abc$",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup invalid [no password]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a548b842-3b11-406e-8399-7284f51ad238",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Body contains validation errors\",function(){",
+									"    pm.expect(jsonData.errors).to.have.all.keys(\"password\");",
+									"   ",
+									"})",
+									"pm.test(\"Error msg tells us, we didn't send username\",function(){",
+									"     pm.expect(jsonData.errors.password.msg).to.equal(\"password is required\");",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "someUser{{$randomInt}}",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "12345678Abc$",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup invalid [invalid username]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e4fdb02f-46e9-4e80-8645-9c651284e037",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Body contains validation errors\",function(){",
+									"    pm.expect(jsonData.errors).to.have.all.keys(\"username\");",
+									"   ",
+									"})",
+									"pm.test(\"Error msg tells us, we didn't send invalid username\",function(){",
+									"     pm.expect(jsonData.errors.username.msg).to.equal(\"username must contain only letters and numbers\");",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "$3asnasl",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "12345678Abc$",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup invalid [invalid password]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0ad9c553-5a1e-483b-8b7c-7c42b455bb64",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Body contains validation errors\",function(){",
+									"    pm.expect(jsonData.errors).to.have.all.keys(\"password\");",
+									"   ",
+									"})",
+									"pm.test(\"Error msg tells us, we didn't send invalid password\",function(){",
+									"     pm.expect(jsonData.errors.password.msg).to.equal(\"password must be at least 8 symbols, and less than 16\");",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "3asnasl{{$randomInt}}",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "1$",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup invalid [username is already used]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "63410603-f3b1-4b34-a655-b57eba48aa27",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "45d29c5d-ea32-4e44-bf14-64c1e8295f13",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Body contains validation errors\",function(){",
+									"    pm.expect(jsonData.errors).to.have.key(\"username\");",
+									"   ",
+									"})",
+									"pm.test(\"This username is already used\",function(){",
+									"     pm.expect(jsonData.errors.username.msg).to.equal(\"this username is already in use\");",
+									"})"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "{{current_username}}",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "{{current_password}}12",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/user/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "signin test",
+			"description": "",
+			"item": [
+				{
+					"name": "signin valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a183cd48-5799-4cf9-b871-e38bd6f6361b",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"There are access and refresh token\",function(){",
+									"     pm.expect(jsonData.tokens).to.have.keys([\"accessToken\",\"refreshToken\"]);",
+									"})",
+									"",
+									"pm.test(\"Text inside is equal to sended text\",function(){",
+									"     pm.expect(jsonData.text).to.equal(pm.env)",
+									"})",
+									"",
+									"pm.test(\"Returned user's profile is equal to stored\",function(){",
+									"    pm.expect(jsonData.user.username).to.equal(pm.environment.get(\"current_username\"));",
+									"    pm.expect(jsonData.user.id).to.equal(pm.environment.get(\"current_id\"));",
+									"})",
+									"",
+									"pm.test(\"Refresh token contains token and expiredIn fields\",function(){",
+									"     pm.expect(jsonData.tokens.refreshToken).to.have.keys([\"token\",\"expiredIn\"]);",
+									"})",
+									"pm.test(\"Access token contains token and expiredIn fields\",function(){",
+									"     pm.expect(jsonData.tokens.accessToken).to.have.keys([\"token\",\"expiredIn\"]);",
+									"})",
+									"",
+									"",
+									"pm.environment.set(\"token-access\", jsonData.tokens.accessToken.token);",
+									"pm.environment.set(\"token-refresh\", jsonData.tokens.refreshToken.token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{current_username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{current_password}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/signin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin invalid [no such user]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a05ff9ad-4848-4895-8ab4-111447f5097b",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "00{{current_username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{current_password}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/signin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin invalid [invalid password]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a05ff9ad-4848-4895-8ab4-111447f5097b",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "00{{current_password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{current_username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/signin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin invalid [empty password]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a05ff9ad-4848-4895-8ab4-111447f5097b",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{current_username}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/signin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin invalid [empty username]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a05ff9ad-4848-4895-8ab4-111447f5097b",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{current_password}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/signin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "regenerate access-token test",
+			"description": "",
+			"item": [
+				{
+					"name": "new access token valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8ab7f63d-7035-46e3-aa41-3d04f67de5e3",
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"There are only new access token\",function(){",
+									"     pm.expect(jsonData).to.have.all.keys([\"accessToken\"]);",
+									"})",
+									"",
+									"pm.test(\"Access token contains token and expiredIn fields\",function(){",
+									"     pm.expect(jsonData.accessToken).to.have.keys([\"token\",\"expiredIn\"]);",
+									"})",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-refresh}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/access-token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"access-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new access token invalid [no auth]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c5a4de17-e56a-494d-bf3f-dee7299cd971",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/access-token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"access-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "new access token invalid [invalid token]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c5a4de17-e56a-494d-bf3f-dee7299cd971",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-refresh}}12",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/access-token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"access-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "logout test",
+			"description": "",
+			"item": [
+				{
+					"name": "logout basic valid",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "33d764d8-2478-4f17-a341-f8111ccebc2e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{current_username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{current_password}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/logout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout invalid [empty authorization]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f169c6bf-41e0-4b52-9169-c96b7a82d74c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/logout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout access-token invalid [token outdated]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f37f8260-acb8-4883-a03d-8e362cca71e3",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token-access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "{{host}}/user/logout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
